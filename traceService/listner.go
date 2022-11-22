@@ -25,6 +25,8 @@ type Task struct {
 	TraceResult     []*trace.Result
 }
 
+const ReportCycle int = 20
+
 var ActiveSchedulers map[TargetIP]Task
 
 func init() {
@@ -66,7 +68,7 @@ func (t *Task) UpdateScheduler(listptr *model.TraceList) {
 
 			s.Scheduler.Every(item.Interval).Seconds().Do(s.GoTrace)
 			// 每 6 个单位间隔汇报一次
-			s.Scheduler.Every(item.Interval * 6).Seconds().Do(s.ResultReport)
+			s.Scheduler.Every(item.Interval * ReportCycle).Seconds().Do(s.ResultReport)
 			s.Scheduler.StartAsync()
 		}
 	}
@@ -153,6 +155,11 @@ func (t *Task) ResultReport() {
 			ReportMap[ttl].MinLatency = minLatency
 			ReportMap[ttl].AvgLatency = avgLatency / float64(count)
 			ReportMap[ttl].IPList = RemoveRepeatedElement(ReportMap[ttl].IPList)
+			ReportMap[ttl].PacketLoss = (float64(len(t.TraceResult)) - float64(count)) / float64(len(t.TraceResult))
+			// 防止偶尔因为路由跟踪线程延时导致的多记
+			if ReportMap[ttl].PacketLoss < 0 {
+				ReportMap[ttl].PacketLoss = 0
+			}
 		}
 	}
 	res := &model.Report{
@@ -160,6 +167,7 @@ func (t *Task) ResultReport() {
 		Interval: t.IntervalSeconds,
 		NodeID:   t.NodeId,
 		TaskID:   t.TaskId,
+		Method:   int(t.TraceConfig.Method),
 	}
 	fetchService.PostResult(res)
 	t.CleanUpResult()

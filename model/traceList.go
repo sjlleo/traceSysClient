@@ -14,6 +14,7 @@ type TraceTask struct {
 
 type HopReport struct {
 	IPList     []string `json:"ip_list"`
+	PacketLoss float64  `json:"packetLoss"`
 	MinLatency float64  `json:"min_latency"`
 	MaxLatency float64  `json:"max_latency"`
 	AvgLatency float64  `json:"avg_latency"`
@@ -25,4 +26,5 @@ type Report struct {
 	TaskID   uint               `json:"taskId"`
 	Interval int                `json:"interval"`
 	Token    string             `json:"token"`
+	Method   int                `json:"method"`
 }
