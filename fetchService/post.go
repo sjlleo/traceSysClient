@@ -9,24 +9,24 @@ import (
 	"unsafe"
 
 	"github.com/sjlleo/traceSysClient/model"
+	"github.com/spf13/viper"
 )
 
 func PostResult(r *model.Report) error {
 
-	// var ApiToken string = viper.Get("token").(string)
-	// var ApiPrefix string = viper.Get("backcallurl").(string)
-	// apiPath := ApiPrefix
-	ApiToken := "cuxfDeNdaB4TZb8dDyKBD"
-	ApiPrefix := "https://api.trace.ac"
-	apiPath := "/api/result/add"
-	url := ApiPrefix + apiPath
+	var ApiToken string = viper.Get("token").(string)
+	var ApiPrefix string = viper.Get("backcallurl").(string)
+	apiPath := ApiPrefix + "/api/result/add"
+	// ApiToken := "cuxfDeNdaB4TZb8dDyKBD"
+	// ApiPrefix := "https://api.trace.ac"
+	// apiPath := "/api/result/add"
 	r.Token = ApiToken
 	bytesData, err := json.Marshal(r)
 	if err != nil {
 		return err
 	}
 	reader := bytes.NewReader(bytesData)
-	request, err := http.NewRequest("POST", url, reader)
+	request, err := http.NewRequest("POST", apiPath, reader)
 	if err != nil {
 		return err
 	}

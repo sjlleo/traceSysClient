@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/sjlleo/traceSysClient/model"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -17,15 +18,13 @@ var (
 )
 
 func FetchTraceList() (*model.TraceList, error) {
-	// var ApiToken string = viper.Get("token").(string)
-	// var ApiPrefix string = viper.Get("backcallurl").(string)
-	// apiPath := ApiPrefix
-	ApiToken := "cuxfDeNdaB4TZb8dDyKBD"
-	ApiPrefix := "https://api.trace.ac"
-	apiPath := "/api/tracelist/token/"
-	url := ApiPrefix + apiPath + ApiToken
-	log.Println(url)
-	resp, err := http.Get(url)
+	var ApiToken string = viper.Get("token").(string)
+	var ApiPrefix string = viper.Get("backcallurl").(string)
+	apiPath := ApiPrefix + "/api/tracelist/token/" + ApiToken
+	// ApiToken := "cuxfDeNdaB4TZb8dDyKBD"
+	// ApiPrefix := "https://api.trace.ac"
+	log.Println(apiPath)
+	resp, err := http.Get(apiPath)
 	if err != nil {
 		fmt.Println(err)
 		return nil, ErrFetchFail

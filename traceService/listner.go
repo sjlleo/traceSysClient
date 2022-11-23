@@ -65,6 +65,9 @@ func (t *Task) UpdateScheduler(listptr *model.TraceList) {
 			dstIP := net.ParseIP(item.IP)
 			s.TraceConfig.DestIP = dstIP
 			s.TraceConfig.Method = trace.TraceMethod(item.Method)
+			if s.TraceConfig.Method != trace.ICMP {
+				s.TraceConfig.DestPort = item.TargetPort
+			}
 
 			s.Scheduler.Every(item.Interval).Seconds().Do(s.GoTrace)
 			// 每 6 个单位间隔汇报一次
@@ -80,7 +83,7 @@ func (t *Task) CleanUpScheduler(listptr *model.TraceList) {
 	for taskIP, activeTask := range ActiveSchedulers {
 		var taskShouldDelete bool = true
 		for _, pendingTask := range listptr.Task {
-			if TargetIP(pendingTask.IP) == taskIP {
+			if TargetIP(pendingTask.IP) == taskIP && pendingTask.Method == int(activeTask.TraceConfig.Method) {
 				taskShouldDelete = false
 				break
 			}

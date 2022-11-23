@@ -5,11 +5,12 @@ type TraceList struct {
 }
 
 type TraceTask struct {
-	TaskID   int    `json:"id"`
-	Interval int    `json:"interval"`
-	Method   int    `json:"method"`
-	NodeID   uint   `json:"nodeId"`
-	IP       string `json:"ip"`
+	TaskID     int    `json:"id"`
+	Interval   int    `json:"interval"`
+	Method     int    `json:"method"`
+	NodeID     uint   `json:"nodeId"`
+	TargetPort int    `json:"targetPort"`
+	IP         string `json:"ip"`
 }
 
 type HopReport struct {
