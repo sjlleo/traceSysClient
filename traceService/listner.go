@@ -205,20 +205,20 @@ func (t *Task) GoTrace() {
 	case trace.ICMP:
 		tracer := &trace.ICMPTracer{Config: *t.TraceConfig}
 		res, _ = tracer.Execute()
-
 	case trace.TCP:
-		t.TraceConfig.DestPort = 443
+		if t.TraceConfig.DestPort == 0 {
+			t.TraceConfig.DestPort = 443
+		}
 		tracer := &trace.TCPTracer{Config: *t.TraceConfig}
 		res, _ = tracer.Execute()
-
 	case trace.UDP:
-		t.TraceConfig.DestPort = 53
+		if t.TraceConfig.DestPort == 0 {
+			t.TraceConfig.DestPort = 53
+		}
 		tracer := &trace.UDPTracer{Config: *t.TraceConfig}
 		res, _ = tracer.Execute()
-
 	}
 	t.ResultRWLock.Lock()
 	defer t.ResultRWLock.Unlock()
-	// log.Println(res)
 	t.TraceResult = append(t.TraceResult, res)
 }
