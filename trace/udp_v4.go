@@ -65,7 +65,7 @@ func (t *UDPTracer) Execute() (*Result, error) {
 		time.Sleep(1 * time.Millisecond)
 	}
 	// 如果是表格模式，则一次性并发请求
-		t.wg.Wait()
+	t.wg.Wait()
 	t.res.reduce(t.final)
 
 	return &t.res, nil
@@ -106,8 +106,8 @@ func (t *UDPTracer) handleICMPMessage(msg ReceivedMessage, data []byte) {
 		return
 	}
 	srcPort := util.GetUDPSrcPort(header)
-	//t.inflightRequestLock.Lock()
-	//defer t.inflightRequestLock.Unlock()
+	t.inflightRequestLock.Lock()
+	defer t.inflightRequestLock.Unlock()
 	ch, ok := t.inflightRequest[int(srcPort)]
 	if !ok {
 		return

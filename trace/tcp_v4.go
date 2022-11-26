@@ -143,7 +143,7 @@ func (t *TCPTracer) listenTCP() {
 			if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
 				tcp, _ := tcpLayer.(*layers.TCP)
 				// 取得目标主机的Sequence Number
-
+				t.inflightRequestLock.Lock()
 				if ch, ok := t.inflightRequest[int(tcp.Ack-1)]; ok {
 					// 最后一跳
 					ch <- Hop{
@@ -151,6 +151,7 @@ func (t *TCPTracer) listenTCP() {
 						Address: msg.Peer,
 					}
 				}
+				t.inflightRequestLock.Unlock()
 			}
 		}
 	}

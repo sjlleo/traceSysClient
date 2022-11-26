@@ -171,6 +171,7 @@ func (t *Task) ResultReport() {
 		NodeID:   t.NodeId,
 		TaskID:   t.TaskId,
 		Method:   int(t.TraceConfig.Method),
+		Time:     time.Now(),
 	}
 	fetchService.PostResult(res)
 	t.CleanUpResult()
