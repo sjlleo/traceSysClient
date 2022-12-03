@@ -18,6 +18,9 @@ var (
 )
 
 func FetchTraceList() (*model.TraceList, error) {
+	if viper.Get("token") == nil {
+		log.Fatal("未能读取配置信息，请检查是否正确配置 config.yaml")
+	}
 	var ApiToken string = viper.Get("token").(string)
 	var ApiPrefix string = viper.Get("backcallurl").(string)
 	apiPath := ApiPrefix + "/api/tracelist/token/" + ApiToken
