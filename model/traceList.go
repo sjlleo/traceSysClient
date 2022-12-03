@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type TraceList struct {
 	Task []TraceTask `json:"task"`
 }
@@ -28,4 +30,5 @@ type Report struct {
 	Interval int                `json:"interval"`
 	Token    string             `json:"token"`
 	Method   int                `json:"method"`
+	Time     time.Time          `json:"time"`
 }

@@ -34,7 +34,6 @@ func FetchTraceList() (*model.TraceList, error) {
 	}
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
-
 	var res model.TraceList
 	err = json.Unmarshal(body, &res)
 	if err != nil {
