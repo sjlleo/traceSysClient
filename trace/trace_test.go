@@ -20,7 +20,7 @@ func ConfigInit() *Config {
 
 func TestICMPv4(t *testing.T) {
 	c := ConfigInit()
-	TargetIPStr := "8.8.8.8"
+	TargetIPStr := "101.95.52.34"
 	c.DestIP = net.ParseIP(TargetIPStr)
 	tracer := &ICMPTracer{Config: *c}
 	res, _ := tracer.Execute()

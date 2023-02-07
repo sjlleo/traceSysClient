@@ -63,8 +63,10 @@ func (t *ICMPTracer) Execute() (*Result, error) {
 			go t.send(ttl)
 		}
 		// 一组TTL全部退出（收到应答或者超时终止）以后，再进行下一个TTL的包发送
-		t.wg.Wait()
+		<-time.After(50 * time.Millisecond)
 	}
+	t.wg.Wait()
+
 	t.res.reduce(t.final)
 
 	return &t.res, nil
