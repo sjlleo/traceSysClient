@@ -1,6 +1,7 @@
 package traceService
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"sync"
@@ -202,23 +203,42 @@ func StartService() {
 
 func (t *Task) GoTrace() {
 	var res *trace.Result
-	switch t.TraceConfig.Method {
-	case trace.ICMP:
-		tracer := &trace.ICMPTracer{Config: *t.TraceConfig}
-		res, _ = tracer.Execute()
-	case trace.TCP:
-		if t.TraceConfig.DestPort == 0 {
-			t.TraceConfig.DestPort = 443
+
+	// 解析域名
+	if ip, err := net.LookupHost(t.TaskIP); err != nil {
+		return
+	} else {
+		t.TraceConfig.DestIP = net.ParseIP(ip[0])
+	}
+
+	if t.TraceConfig.DestIP == nil {
+		fmt.Println("Invalid IP address")
+		return
+	}
+
+	if t.TraceConfig.DestIP.To4() != nil {
+		switch t.TraceConfig.Method {
+		case trace.ICMP:
+			tracer := &trace.ICMPTracer{Config: *t.TraceConfig}
+			res, _ = tracer.Execute()
+		case trace.TCP:
+			if t.TraceConfig.DestPort == 0 {
+				t.TraceConfig.DestPort = 443
+			}
+			tracer := &trace.TCPTracer{Config: *t.TraceConfig}
+			res, _ = tracer.Execute()
+		case trace.UDP:
+			if t.TraceConfig.DestPort == 0 {
+				t.TraceConfig.DestPort = 53
+			}
+			tracer := &trace.UDPTracer{Config: *t.TraceConfig}
+			res, _ = tracer.Execute()
 		}
-		tracer := &trace.TCPTracer{Config: *t.TraceConfig}
-		res, _ = tracer.Execute()
-	case trace.UDP:
-		if t.TraceConfig.DestPort == 0 {
-			t.TraceConfig.DestPort = 53
-		}
-		tracer := &trace.UDPTracer{Config: *t.TraceConfig}
+	} else {
+		tracer := &trace.ICMPTracerv6{Config: *t.TraceConfig}
 		res, _ = tracer.Execute()
 	}
+	log.Println(res)
 	t.ResultRWLock.Lock()
 	defer t.ResultRWLock.Unlock()
 	t.TraceResult = append(t.TraceResult, res)
