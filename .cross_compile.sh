@@ -2,7 +2,7 @@
 
 set -e
 
-DIST_PREFIX="nexttrace"
+DIST_PREFIX="traceClient"
 DEBUG_MODE=${2}
 TARGET_DIR="dist"
 PLATFORMS="linux/amd64 linux/arm64 linux/mips windows/amd64 windows/arm64"
